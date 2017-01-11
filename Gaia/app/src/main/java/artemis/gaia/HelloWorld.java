@@ -51,7 +51,7 @@ public class HelloWorld extends AppCompatActivity {
         setContentView(R.layout.activity_hello_world);
         Log.d(msg, "The onCreate() event");
 
-              searchString = (EditText) findViewById(R.id.txt_searchString);
+        searchString = (EditText) findViewById(R.id.txt_searchString);
         viewString = (TextView) findViewById(R.id.txt_view);
       
         readUrl obj = new readUrl();

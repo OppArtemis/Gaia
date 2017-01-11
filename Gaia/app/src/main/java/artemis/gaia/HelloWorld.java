@@ -11,11 +11,13 @@ import android.database.Cursor;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class HelloWorld extends AppCompatActivity {
     String msg = "Android : ";
     EditText searchString;
+    TextView viewString;
 
     /** Called when the activity is first created. */
     @Override
@@ -25,6 +27,7 @@ public class HelloWorld extends AppCompatActivity {
         Log.d(msg, "The onCreate() event");
 
         searchString = (EditText) findViewById(R.id.txt_searchString);
+        viewString = (TextView) findViewById(R.id.txt_view);
     }
 
     public void pollURL(View view) {
@@ -32,6 +35,7 @@ public class HelloWorld extends AppCompatActivity {
         String text = searchString.getText().toString();
         Toast.makeText(HelloWorld.this, text, Toast.LENGTH_SHORT).show();
 
+        viewString.setText(text);
 //        findViewById(R.id.txt_verify).set;
     }
 }

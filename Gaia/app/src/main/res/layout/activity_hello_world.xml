@@ -13,40 +13,60 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
+        android:text="Ingredient:"
+        android:id="@+id/textView2"
+        android:layout_alignBottom="@+id/txt_searchString"
+        android:layout_alignParentTop="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-    <Button
-        android:text="Button"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="60dp"
-        android:id="@+id/btn_connect"
-        android:layout_below="@+id/textView"
+        android:text="Ingredient:"
+        android:id="@+id/textView"
+        android:layout_alignBottom="@+id/txt_searchString"
+        android:layout_alignParentTop="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+    <TextView
+        android:text="Search results here"
+        android:id="@+id/txt_view"
+        android:layout_below="@+id/btn_connect"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="pollURL"/>
+        android:layout_marginTop="17dp"
+        android:layout_width="600px"
+        android:layout_height="800px"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:scrollbars="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:background="@android:color/background_dark"
+        android:textColor="@android:color/background_light"
+        android:layout_alignParentBottom="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:text="Salt"
         android:ems="10"
-        android:layout_below="@+id/btn_connect"
+        android:id="@+id/txt_searchString"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp"
-        android:id="@+id/txt_searchString" />
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="TextView"
+        android:text="Below scrollable textbox shows the search results:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/btn_connect"
         android:layout_alignParentLeft="true"
+<<<<<<< HEAD
         android:layout_alignParentStart="true"
         android:id="@+id/txt_view" />
 
@@ -59,4 +79,17 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="39dp"
         android:id="@+id/PhotoButton" />
+=======
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Search..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_connect"
+        android:onClick="pollURL"
+        android:layout_below="@+id/txt_searchString"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+>>>>>>> refs/remotes/origin/master
 </RelativeLayout>

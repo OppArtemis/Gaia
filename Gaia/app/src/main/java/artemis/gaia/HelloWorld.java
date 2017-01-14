@@ -2,13 +2,7 @@ package artemis.gaia;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.app.Activity;
 import android.util.Log;
-import android.net.Uri;
-import android.content.ContentValues;
-import android.content.CursorLoader;
-import android.database.Cursor;
-import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,10 +11,6 @@ import android.widget.Toast;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 import java.lang.Thread;
 
 import android.os.AsyncTask;
@@ -30,32 +20,46 @@ import java.net.HttpURLConnection;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 
-import java.util.concurrent.TimeUnit;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+
+import android.text.method.*;
 
 public class HelloWorld extends AppCompatActivity {
+<<<<<<< HEAD
     String msg = "Android : ";
     EditText searchString;
     TextView viewString;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+=======
+    String m_logHeader = "Android : ";
+    EditText m_editTextSearch;
+    TextView m_textViewReport;
+>>>>>>> refs/remotes/origin/master
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hello_world);
-        Log.d(msg, "The onCreate() event");
+        Log.d(m_logHeader, "The onCreate() event");
 
-        searchString = (EditText) findViewById(R.id.txt_searchString);
-        viewString = (TextView) findViewById(R.id.txt_view);
-      
+        // initialize the on-screen UI objects
+        m_editTextSearch = (EditText) findViewById(R.id.txt_searchString);
+        m_textViewReport = (TextView) findViewById(R.id.txt_view);
+    }
+
+    public void pollURL(View view) {
+        // check edittextsearch for the contents and respond to user
+        String searchString = m_editTextSearch.getText().toString();
+        Toast.makeText(HelloWorld.this, "Searching for: " + searchString, Toast.LENGTH_SHORT).show();
+
+        // clean the string before passing it to the database
+        searchString = stringProcessing.sanitizeString(searchString);
+
+        // send the string to readURL and obtain response
         readUrl obj = new readUrl();
+        obj.setInput(searchString);
         obj.execute();
         try {
             Thread.sleep(3000);
@@ -70,25 +74,25 @@ public class HelloWorld extends AppCompatActivity {
 
         Matcher m = p.matcher(output);
 
-        String foundIngredient = "Ingredient NOT found";
+        String foundIngredient = "Ingredient NOT found: " + searchString;
         if (m.find()) {
-            foundIngredient = "Found Ingredient";
+            foundIngredient = "Ingredient found:" + searchString;
         }
 
         Toast.makeText(HelloWorld.this, foundIngredient, Toast.LENGTH_SHORT).show();
 
         //connectInternet object = new connectInternet(stringUrl);
 
-
-    }
-
-    public void pollURL(View view) {
-        //  String text = findViewById(R.id.txt_searchString).toString();
-        String text = searchString.getText().toString();
-        Toast.makeText(HelloWorld.this, text, Toast.LENGTH_SHORT).show();
-
-        viewString.setText(text);
+        m_textViewReport.setMovementMethod(ScrollingMovementMethod.getInstance());
+        m_textViewReport.setText(foundIngredient + "\n URL Content:" + output);
+        m_textViewReport.requestFocus();
 //        findViewById(R.id.txt_verify).set;
+    }
+}
+
+class stringProcessing {
+    public static String sanitizeString(String inputString) {
+        return inputString.trim();
     }
 
     public void dispatchTakePictureIntent() {
@@ -102,16 +106,21 @@ public class HelloWorld extends AppCompatActivity {
 
 }
 
-class readUrl extends AsyncTask<Void,Void,Void>
-{
+class readUrl extends AsyncTask<Void,Void,Void> {
+    public String m_input = "";
     public String m_output = "lala";
 
     protected void onPreExecute() {
         //display progress dialog.
 
     }
+
+    protected void setInput(String inputStr) {
+        m_input = inputStr;
+    }
+
     protected Void doInBackground(Void... params) {
-        String stringUrl = "http://webprod.hc-sc.gc.ca/nhpid-bdipsn/ingredsReq.do?srchRchTxt=salt&srchRchRole=-1&mthd=Search&lang=eng";
+        String stringUrl = "http://webprod.hc-sc.gc.ca/nhpid-bdipsn/ingredsReq.do?srchRchTxt=" + m_input + "&srchRchRole=-1&mthd=Search&lang=eng";
         //String stringUrl = "http://www.google.ca";
 
         URL url;

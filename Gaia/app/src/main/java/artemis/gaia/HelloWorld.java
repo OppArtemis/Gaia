@@ -30,12 +30,15 @@ public class HelloWorld extends AppCompatActivity {
     String msg = "Android : ";
     EditText searchString;
     TextView viewString;
+<<<<<<< HEAD
     static final int REQUEST_IMAGE_CAPTURE = 1;
 =======
     String m_logHeader = "Android : ";
     EditText m_editTextSearch;
     TextView m_textViewReport;
 >>>>>>> refs/remotes/origin/master
+=======
+>>>>>>> parent of 416b9f2... Some stuff which may not work
 
     /** Called when the activity is first created. */
     @Override
@@ -94,16 +97,6 @@ class stringProcessing {
     public static String sanitizeString(String inputString) {
         return inputString.trim();
     }
-
-    public void dispatchTakePictureIntent() {
-        //  String text = findViewById(R.id.txt_searchString).toString();
-        String text = "Switch to Photo";
-        Toast.makeText(HelloWorld.this, text, Toast.LENGTH_SHORT).show();
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-    }
-
 }
 
 class readUrl extends AsyncTask<Void,Void,Void> {

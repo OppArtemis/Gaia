@@ -69,6 +69,7 @@
 <<<<<<< HEAD
         android:layout_alignParentStart="true"
         android:id="@+id/txt_view" />
+<<<<<<< HEAD
 
     <Button
         android:text="Take Photo"
@@ -92,4 +93,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 >>>>>>> refs/remotes/origin/master
+=======
+>>>>>>> parent of 416b9f2... Some stuff which may not work
 </RelativeLayout>

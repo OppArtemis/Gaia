@@ -43,6 +43,7 @@ public class HelloWorld extends AppCompatActivity {
     String msg = "Android : ";
     EditText searchString;
     TextView viewString;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     /** Called when the activity is first created. */
     @Override
@@ -89,6 +90,16 @@ public class HelloWorld extends AppCompatActivity {
         viewString.setText(text);
 //        findViewById(R.id.txt_verify).set;
     }
+
+    public void dispatchTakePictureIntent() {
+        //  String text = findViewById(R.id.txt_searchString).toString();
+        String text = "Switch to Photo";
+        Toast.makeText(HelloWorld.this, text, Toast.LENGTH_SHORT).show();
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    }
+
 }
 
 class readUrl extends AsyncTask<Void,Void,Void>

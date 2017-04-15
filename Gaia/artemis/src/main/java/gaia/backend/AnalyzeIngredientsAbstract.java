@@ -5,5 +5,5 @@ package gaia.backend;
  */
 
 public interface AnalyzeIngredientsAbstract {
-    String sourceUrl = ""; // stores the target search URL where the search string is denoted by %s within the string
+    public String sourceUrl = ""; // stores the target search URL where the search string is denoted by %s within the string
 }

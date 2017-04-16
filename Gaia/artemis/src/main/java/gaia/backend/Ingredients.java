@@ -18,12 +18,24 @@ public class Ingredients {
 
     public enum dataSourcesEnum { // denotes the data sources to poll for health information
         All,
-        HealthCanada
+        HealthCanada,
+        FoodAllergiesCanada
     }
 
     public enum healthConditionsEnum { // denotes the type of conditions the user are interested in seeing
         All
     }
+
+    public boolean getSafe() {return safeBoolean;}
+    public int getSafeInt() {if (safeBoolean == true) return 1; else return 0;}
+    public List<String> getCommonNames() {return commonNames;};
+    public String getDetails() {return safeDetails;};
+    public String getURL() {return URL;};
+
+    public void setSafe(boolean pSafe) {safeBoolean = pSafe;}
+    public void setCommonNames(List<String> pCommonName) {commonNames = pCommonName;};
+    public void setDetails(String pDetails) {safeDetails = pDetails;};
+    public void setURL(String pURL) {URL = pURL;};
 
     public static void main(String[] args) {
         // generate a list of ingredients
@@ -96,6 +108,6 @@ public class Ingredients {
         // process the URL response
 
         // parse into the member variables of this class
+        return false;
     }
-
 }

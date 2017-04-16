@@ -20,41 +20,7 @@ public class IngredientsDatabase {
         System.out.println("IngredientsDatabase main() tester function.");
 
         IngredientsDatabase testDb = new IngredientsDatabase();
-
-//        // initalize the db
-//        testDb.openDbConnection();
-//        testDb.refreshDb();
-//        testDb.closeDbConnection();
-//
-////        // populate with some data
-////        testDb.openDbConnection();
-////        testDb.insertTesting(1);
-////        testDb.insertTesting(2);
-////        testDb.insertTesting(3);
-////        int largestPkId = testDb.findLargestPkid();
-////        testDb.insertTesting(largestPkId+1);
-////        testDb.closeDbConnection();
-//
-//        // populate with actual data
-//        List<Ingredients> addIngredients = new ArrayList<>();
-//        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg");
-//        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk");
-//        addIngredients.add(eggIngredientObj);
-//        addIngredients.add(milkIngredientObj);
-//
-//        testDb.openDbConnection();
-//        testDb.insertIngredients(addIngredients);
-//        testDb.closeDbConnection();
-
-        // loading actual data
-        List<String> loadString = new ArrayList<>();
-        loadString.add("egg");
-        loadString.add("milk");
-        loadString.add("MSG");
-
-        testDb.openDbConnection();
-        List<Ingredients> loadIngredients = testDb.selectIngredients(loadString);
-        testDb.closeDbConnection();
+        testDb.resetDatabaseAndUpdate();
     }
 
     public IngredientsDatabase()
@@ -194,8 +160,16 @@ public class IngredientsDatabase {
     {
         Ingredients retrievedIngredients = null;
         try {
-            String sqlStr = "SELECT * FROM " + tableNameNameMap + " WHERE NAMEMAP_PK='" + pIngredientName + "';";
-            ResultSet rs = sqlExecuteQuery(sqlStr);
+            // unsanitized form
+//            String sqlStr = "SELECT * FROM " + tableNameNameMap + " WHERE NAMEMAP_PK='" + pIngredientName + "';";
+//            ResultSet rs = sqlExecuteQuery(sqlStr);
+
+            // sanitized form
+            String sqlStr = "SELECT * FROM " + tableNameNameMap + " WHERE NAMEMAP_PK=?;";
+            PreparedStatement preparedStatement = c.prepareStatement(sqlStr);
+            preparedStatement.setString(1, pIngredientName);
+            ResultSet rs = preparedStatement.executeQuery();
+
             retrievedIngredients = new Ingredients();
             List<String> retrievedString = new ArrayList<>();
 
@@ -308,5 +282,54 @@ public class IngredientsDatabase {
         }
 
         return rs;
+    }
+
+    public void resetDatabaseAndUpdate()
+    {
+        //        // initalize the db
+//        testDb.openDbConnection();
+//        testDb.refreshDb();
+//        testDb.closeDbConnection();
+//
+////        // populate with some data
+////        testDb.openDbConnection();
+////        testDb.insertTesting(1);
+////        testDb.insertTesting(2);
+////        testDb.insertTesting(3);
+////        int largestPkId = testDb.findLargestPkid();
+////        testDb.insertTesting(largestPkId+1);
+////        testDb.closeDbConnection();
+//
+//        // populate with actual data
+//        List<Ingredients> addIngredients = new ArrayList<>();
+//        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg");
+//        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk");
+//        addIngredients.add(eggIngredientObj);
+//        addIngredients.add(milkIngredientObj);
+//
+//        testDb.openDbConnection();
+//        testDb.insertIngredients(addIngredients);
+//        testDb.closeDbConnection();
+
+        // loading data from websites
+        List<Ingredients> addIngredients = new ArrayList<>();
+        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg");
+        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk");
+        addIngredients.add(eggIngredientObj);
+        addIngredients.add(milkIngredientObj);
+
+        // poll database for data
+        List<String> loadString = new ArrayList<>();
+        loadString.add("egg");
+        loadString.add("milk");
+        loadString.add("MSG");
+
+        openDbConnection();
+
+        refreshDb();
+        insertIngredients(addIngredients);
+        List<Ingredients> loadIngredients = selectIngredients(loadString);
+
+        closeDbConnection();
     }
 }

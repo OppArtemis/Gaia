@@ -27,6 +27,7 @@ public class Ingredients {
     }
 
     public boolean getSafe() {return safeBoolean;}
+    public int getSafeInt() {if (safeBoolean == true) return 1; else return 0;}
     public List<String> getCommonNames() {return commonNames;};
     public String getDetails() {return safeDetails;};
     public String getURL() {return URL;};

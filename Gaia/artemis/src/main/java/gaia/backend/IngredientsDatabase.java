@@ -21,35 +21,39 @@ public class IngredientsDatabase {
 
         IngredientsDatabase testDb = new IngredientsDatabase();
 
-        // initalize the db
-        testDb.openDbConnection();
-        testDb.refreshDb();
-        testDb.closeDbConnection();
-
-//        // populate with some data
+//        // initalize the db
 //        testDb.openDbConnection();
-//        testDb.insertTesting(1);
-//        testDb.insertTesting(2);
-//        testDb.insertTesting(3);
-//        int largestPkId = testDb.findLargestPkid();
-//        testDb.insertTesting(largestPkId+1);
+//        testDb.refreshDb();
+//        testDb.closeDbConnection();
+//
+////        // populate with some data
+////        testDb.openDbConnection();
+////        testDb.insertTesting(1);
+////        testDb.insertTesting(2);
+////        testDb.insertTesting(3);
+////        int largestPkId = testDb.findLargestPkid();
+////        testDb.insertTesting(largestPkId+1);
+////        testDb.closeDbConnection();
+//
+//        // populate with actual data
+//        List<Ingredients> addIngredients = new ArrayList<>();
+//        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg");
+//        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk");
+//        addIngredients.add(eggIngredientObj);
+//        addIngredients.add(milkIngredientObj);
+//
+//        testDb.openDbConnection();
+//        testDb.insertIngredients(addIngredients);
 //        testDb.closeDbConnection();
 
-        // populate with actual data
-        
-
-        testDb.openDbConnection();
-        testDb.insertIngredients();
-        testDb.closeDbConnection();
-
         // loading actual data
-        List<java.lang.String> loadString = new ArrayList<>();
+        List<String> loadString = new ArrayList<>();
         loadString.add("egg");
         loadString.add("milk");
         loadString.add("MSG");
 
         testDb.openDbConnection();
-        testDb.selectIngredients();
+        List<Ingredients> loadIngredients = testDb.selectIngredients(loadString);
         testDb.closeDbConnection();
     }
 
@@ -90,7 +94,13 @@ public class IngredientsDatabase {
 
     public void createTables()
     {
-        String sqlStr = "CREATE TABLE IF NOT EXISTS " + tableNameIngredientSafety +
+        String sqlStr = "DROP TABLE IF EXISTS '" + tableNameIngredientSafety + "'";
+        sqlExecuteUpdate(sqlStr);
+
+        sqlStr = "DROP TABLE IF EXISTS '" + tableNameNameMap + "'";
+        sqlExecuteUpdate(sqlStr);
+
+        sqlStr = "CREATE TABLE IF NOT EXISTS " + tableNameIngredientSafety +
                 "(INGREDIENTSAFETY_PK       INT PRIMARY KEY     NOT NULL," +
                 " URL                       TEXT                NOT NULL, " +
                 " SAFE                      INT                 NOT NULL, " +
@@ -122,7 +132,7 @@ public class IngredientsDatabase {
             String sqlStr = "SELECT * FROM " + tableNameIngredientSafety + ";";
             ResultSet rs = sqlExecuteQuery(sqlStr);
             while ( rs.next() ) {
-                lastPkId = rs.getInt("ID");
+                lastPkId = rs.getInt("INGREDIENTSAFETY_PK");
             }
 
 //            String sqlStr = "SELECT * FROM " + tableNameIngredientSafety + ";";
@@ -153,7 +163,7 @@ public class IngredientsDatabase {
 
             String sqlStr = "INSERT INTO " + tableNameIngredientSafety + " (INGREDIENTSAFETY_PK,URL,SAFE,DETAILS,LASTUPDATE) " +
                     "VALUES (" + newPkid + ", '" + pIngredients.get(i).getURL() + "', " +
-                    pIngredients.get(i).getSafe() + ", '" + pIngredients.get(i).getDetails() + "', '" + nowTime + "');";
+                    pIngredients.get(i).getSafeInt() + ", '" + pIngredients.get(i).getDetails() + "', '" + nowTime + "');";
             sqlExecuteUpdate(sqlStr);
 
             List<String> commonNames = pIngredients.get(i).getCommonNames();
@@ -186,34 +196,39 @@ public class IngredientsDatabase {
         try {
             String sqlStr = "SELECT * FROM " + tableNameNameMap + " WHERE NAMEMAP_PK='" + pIngredientName + "';";
             ResultSet rs = sqlExecuteQuery(sqlStr);
-            if (!rs.isLast())
-            {
-                int pkId = rs.getInt("ID");
-                retrievedIngredients = new Ingredients();
+            retrievedIngredients = new Ingredients();
+            List<String> retrievedString = new ArrayList<>();
+
+            if (!rs.isBeforeFirst() ) {
+                retrievedString.add(pIngredientName);
+                retrievedIngredients.setDetails("No entry found in db");
+            }
+            else {
+                rs.next();
+                int pkId = rs.getInt("INGREDIENTSAFETY_PK");
 
                 // pull out all the common names
-                List<String> retrievedString = new ArrayList<>();
                 String sqlStr2 = "SELECT * FROM " + tableNameNameMap + " WHERE INGREDIENTSAFETY_PK='" + pkId + "';";
-                ResultSet rs2 = sqlExecuteQuery(sqlStr);
+                ResultSet rs2 = sqlExecuteQuery(sqlStr2);
 
-                while ( rs2.next() ) {
-                    retrievedString.add(rs.getString("NAMEMAP_PK"));
+                while (rs2.next()) {
+                    retrievedString.add(rs2.getString("NAMEMAP_PK"));
                 }
-                retrievedIngredients.setCommonNames(retrievedString);
 
                 // pull out the corresponding entry in tableNameIngredientSafety
-                sqlStr2 = "SELECT * FROM " + tableNameIngredientSafety + " WHERE INGREDIENTSAFETY_PK='" + pkId + "';";
-                rs2 = sqlExecuteQuery(sqlStr);
+                String sqlStr3 = "SELECT * FROM " + tableNameIngredientSafety + " WHERE INGREDIENTSAFETY_PK='" + pkId + "';";
+                ResultSet rs3 = sqlExecuteQuery(sqlStr3);
 
-                if (rs2.getInt("SAFE") == 0)
+                if (rs3.getInt("SAFE") == 0)
                     retrievedIngredients.setSafe(false);
                 else
                     retrievedIngredients.setSafe(true);
 
-                retrievedIngredients.setDetails(rs2.getString("DETAILS"));
-                retrievedIngredients.setURL(rs2.getString("URL"));
+                retrievedIngredients.setDetails(rs3.getString("DETAILS"));
+                retrievedIngredients.setURL(rs3.getString("URL"));
             }
 
+            retrievedIngredients.setCommonNames(retrievedString);
             rs.close();
 
 

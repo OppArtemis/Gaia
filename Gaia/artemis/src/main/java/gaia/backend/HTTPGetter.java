@@ -1,21 +1,15 @@
 package gaia.backend;
 
-// imports for realUrl
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.io.IOException;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+// Required for parsing HTML
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+// Utilities
 import java.util.*;
 
 public class HTTPGetter {
@@ -23,7 +17,7 @@ public class HTTPGetter {
         System.out.println("HTTPGetting main() tester function.");
 
         // linear testing
-        //Ingredients badIngredientObj = pollFromFoodAllergiesCanada("coke");
+        Ingredients notFoundIngredientObj = pollFromFoodAllergiesCanada("coke");
         Ingredients eggIngredientObj = pollFromFoodAllergiesCanada("egg");
         Ingredients milkIngredientObj = pollFromFoodAllergiesCanada("milk");
         //pollURL("Monosodium glutamate");
@@ -70,19 +64,12 @@ public class HTTPGetter {
 
     //
     //
-    // @param stringUrl : MANDATORY string @n
-    //  URL to get information from.
+    // @param htmlOutput : MANDATORY string @n
+    //  HTML in string format.
     //
     // @return :
     //  Elements : URL body from HTML
-    public static Elements getBodyFromUrl(String stringUrl) {
-        // send the string to readURL and obtain response
-        readUrl readUrlObj = new readUrl();
-        readUrlObj.setUrl(stringUrl);
-        readUrlObj.getUrl();
-
-        String htmlOutput = readUrlObj.m_output;
-
+    public static Elements getBodyFromHtml(String htmlOutput) {
         // Use Jsoup to get the body field of HTML
         Document doc = Jsoup.parse(htmlOutput);
         Elements body = doc.select("body");
@@ -104,21 +91,39 @@ public class HTTPGetter {
         String stringUrl = "http://foodallergycanada.ca/about-allergies/food-allergens/";
         stringUrl += ingredientName;
 
-        Elements body = getBodyFromUrl(stringUrl);
+        // Instantiate Ingredients object
+        Ingredients ingredientObj = new Ingredients();
+        ingredientObj.setURL(stringUrl);
+
+        // Store in a list the ingredient common names
         List<String> commonNames = new ArrayList<>();
         commonNames.add(ingredientName);
-        commonNames.addAll(getCommonNamesFromBody(body));
 
-        Ingredients ingredientObj = new Ingredients();
+        // send the string to readURL and obtain response
+        readUrl readUrlObj = new readUrl();
+        readUrlObj.setUrl(stringUrl);
+        readUrlObj.getUrl();
+
+        String htmlOutput = readUrlObj.m_output;
+
+        // If the page is not found, then the ingredient has no known allergies concerns.
+        if (htmlOutput.equals("Page not found")) {
+            ingredientObj.setSafe(true);
+        }
+        else {
+            Elements body = getBodyFromHtml(htmlOutput);
+            commonNames.addAll(getCommonNamesFromBody(body));
+
+            ingredientObj.setSafe(false);
+        }
+
         ingredientObj.setCommonNames(commonNames);
-        ingredientObj.setURL(stringUrl);
-        ingredientObj.setSafe(false);
-
-        System.out.println(body);
 
         return ingredientObj;
     }
 
+    //
+    //
     public static void pollURL(String searchString) {
         // clean the string before passing it to the database
         searchString = ParseRawInfo.sanitizeString(searchString);

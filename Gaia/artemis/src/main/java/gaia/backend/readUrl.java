@@ -33,6 +33,22 @@ class readUrl {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        //
+        int responseCode;
+        try {
+            responseCode = urlConnection.getResponseCode();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Check for known response codes:
+        // - 404 : Page not found
+        if (responseCode == 404) {
+            m_output = "Page not found";
+            return;
+        }
+
         InputStream in;
         String output;
 

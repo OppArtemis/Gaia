@@ -13,7 +13,7 @@ import java.net.URL;
 
 class readUrl {
     public String m_input = "";
-    public String m_output = "lala";
+    public String m_output = "NONE";
 
     protected void setUrl(String inputStr) {
         m_input = inputStr;

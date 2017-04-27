@@ -17,9 +17,9 @@ public class HTTPGetter {
         System.out.println("HTTPGetting main() tester function.");
 
         // linear testing
-        Ingredients notFoundIngredientObj = pollFromFoodAllergiesCanada("coke");
-        Ingredients eggIngredientObj = pollFromFoodAllergiesCanada("egg");
-        Ingredients milkIngredientObj = pollFromFoodAllergiesCanada("milk");
+        Ingredients notFoundIngredientObj = pollFromFoodAllergiesCanada("coke", Ingredients.healthConditionsEnum.None);
+        Ingredients eggIngredientObj = pollFromFoodAllergiesCanada("egg", Ingredients.healthConditionsEnum.None);
+        Ingredients milkIngredientObj = pollFromFoodAllergiesCanada("milk", Ingredients.healthConditionsEnum.None);
         //pollURL("Monosodium glutamate");
         //pollURL("lalala");
 
@@ -84,7 +84,7 @@ public class HTTPGetter {
     //
     // @return :
     //  List<String> : list of common names for ingredient.
-    public static Ingredients pollFromFoodAllergiesCanada(String ingredientName) {
+    public static Ingredients pollFromFoodAllergiesCanada(String ingredientName, Ingredients.healthConditionsEnum healthCondition) {
         // clean the string before passing it to the database
         ingredientName = ingredientName.trim();
 
@@ -118,6 +118,10 @@ public class HTTPGetter {
         }
 
         ingredientObj.setCommonNames(commonNames);
+
+        List<Ingredients.healthConditionsEnum> newSafeDetail = new ArrayList<>();
+        newSafeDetail.add(healthCondition);
+        ingredientObj.setDetails(newSafeDetail);
 
         return ingredientObj;
     }

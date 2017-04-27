@@ -9,12 +9,9 @@ import java.util.*;
 public class Ingredients {
     private boolean safeBoolean;
     private List<String> commonNames;
-    private String safeDetails;
+    private List<healthConditionsEnum> safeDetails;
     private String URL;
-    private String strRawFromUrl;
-    private String strSanitized;
     private dataSourcesEnum dataSource;
-    private healthConditionsEnum healthCondition;
 
     public enum dataSourcesEnum { // denotes the data sources to poll for health information
         All,
@@ -23,31 +20,35 @@ public class Ingredients {
     }
 
     public enum healthConditionsEnum { // denotes the type of conditions the user are interested in seeing
-        All
+        None, Bad,
+        Allergy_Eggs, Allergy_Milk, Allergy_Mustard, Allergy_Peanuts, Allergy_Seafood, Allergy_Sesame,
+        Allergy_Soy, Allergy_Sulphites, Allergy_TreeNuts, Allergy_Wheat
     }
 
     public boolean getSafe() {return safeBoolean;}
     public int getSafeInt() {if (safeBoolean == true) return 1; else return 0;}
     public List<String> getCommonNames() {return commonNames;};
-    public String getDetails() {return safeDetails;};
+    public List<healthConditionsEnum> getDetails() {return safeDetails;};
     public String getURL() {return URL;};
 
     public void setSafe(boolean pSafe) {safeBoolean = pSafe;}
     public void setCommonNames(List<String> pCommonName) {commonNames = pCommonName;};
-    public void setDetails(String pDetails) {safeDetails = pDetails;};
+    public void setDetails(List<healthConditionsEnum> pDetails) {safeDetails = pDetails;};
     public void setURL(String pURL) {URL = pURL;};
 
     public static void main(String[] args) {
         // generate a list of ingredients
         String ingredientSearchName = "";
         Ingredients[] ingredientsList = new Ingredients[1];
+        List<healthConditionsEnum> newSafeDetails = new ArrayList<>();
+        newSafeDetails.add(healthConditionsEnum.Bad);
 
         // add "MSG" as a search term using the health canada website
         ingredientSearchName = "MSG";
         ingredientsList[0].commonNames = new ArrayList<>();
         ingredientsList[0].commonNames.add(ingredientSearchName);
         ingredientsList[0].dataSource = dataSourcesEnum.HealthCanada;
-        ingredientsList[0].healthCondition = healthConditionsEnum.All;
+        ingredientsList[0].safeDetails = newSafeDetails;
         ingredientsList[0].fillIngredientStructure();
 
         for (int i = 0; i < ingredientsList.length; i++) {

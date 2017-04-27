@@ -129,7 +129,7 @@ public class IngredientsDatabase {
 
             String sqlStr = "INSERT INTO " + tableNameIngredientSafety + " (INGREDIENTSAFETY_PK,URL,SAFE,DETAILS,LASTUPDATE) " +
                     "VALUES (" + newPkid + ", '" + pIngredients.get(i).getURL() + "', " +
-                    pIngredients.get(i).getSafeInt() + ", '" + pIngredients.get(i).getDetails() + "', '" + nowTime + "');";
+                    pIngredients.get(i).getSafeInt() + ", '" + convertSafeDetailListEnumToString(pIngredients.get(i).getDetails()) + "', '" + nowTime + "');";
             sqlExecuteUpdate(sqlStr);
 
             List<String> commonNames = pIngredients.get(i).getCommonNames();
@@ -175,7 +175,7 @@ public class IngredientsDatabase {
 
             if (!rs.isBeforeFirst() ) {
                 retrievedString.add(pIngredientName);
-                retrievedIngredients.setDetails("No entry found in db");
+//                retrievedIngredients.setDetails("No entry found in db");
             }
             else {
                 rs.next();
@@ -198,7 +198,10 @@ public class IngredientsDatabase {
                 else
                     retrievedIngredients.setSafe(true);
 
-                retrievedIngredients.setDetails(rs3.getString("DETAILS"));
+                List<Ingredients.healthConditionsEnum> tempArray = convertStringToSafeDetailList(rs3.getString("DETAILS"));
+                retrievedIngredients.setDetails(tempArray);
+
+//                retrievedIngredients.setDetails(rs3.getString("DETAILS"));
                 retrievedIngredients.setURL(rs3.getString("URL"));
             }
 
@@ -284,39 +287,45 @@ public class IngredientsDatabase {
         return rs;
     }
 
+    public String convertSafeDetailListEnumToString(List<Ingredients.healthConditionsEnum> safeDetailsList) {
+        String safeDetailsString = safeDetailsList.get(0).name();
+
+        for (int i = 1; i < safeDetailsList.size(); i++) {
+            safeDetailsString = safeDetailsString + "-" + safeDetailsList.get(i).name();
+        }
+
+        return safeDetailsString;
+    }
+
+    public List<Ingredients.healthConditionsEnum> convertStringToSafeDetailList(String safeDetailsString) {
+        List<Ingredients.healthConditionsEnum> safeDetailsList = new ArrayList<>();
+        List<String> stringList = Arrays.asList(safeDetailsString.split("-"));
+
+        for (int i = 0; i < stringList.size(); i++) {
+            safeDetailsList.add(Ingredients.healthConditionsEnum.valueOf(stringList.get(i)));
+        }
+
+        return safeDetailsList;
+    }
+
     public void resetDatabaseAndUpdate()
     {
-        //        // initalize the db
-//        testDb.openDbConnection();
-//        testDb.refreshDb();
-//        testDb.closeDbConnection();
-//
-////        // populate with some data
-////        testDb.openDbConnection();
-////        testDb.insertTesting(1);
-////        testDb.insertTesting(2);
-////        testDb.insertTesting(3);
-////        int largestPkId = testDb.findLargestPkid();
-////        testDb.insertTesting(largestPkId+1);
-////        testDb.closeDbConnection();
-//
-//        // populate with actual data
-//        List<Ingredients> addIngredients = new ArrayList<>();
-//        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg");
-//        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk");
-//        addIngredients.add(eggIngredientObj);
-//        addIngredients.add(milkIngredientObj);
-//
-//        testDb.openDbConnection();
-//        testDb.insertIngredients(addIngredients);
-//        testDb.closeDbConnection();
+        // initalize the db
+        openDbConnection();
+        refreshDb();
+        closeDbConnection();
 
         // loading data from websites
         List<Ingredients> addIngredients = new ArrayList<>();
-        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg");
-        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk");
+        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg", Ingredients.healthConditionsEnum.Allergy_Eggs);
+        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk", Ingredients.healthConditionsEnum.Allergy_Milk);
         addIngredients.add(eggIngredientObj);
         addIngredients.add(milkIngredientObj);
+
+        // insert into the db
+        openDbConnection();
+        insertIngredients(addIngredients);
+        closeDbConnection();
 
         // poll database for data
         List<String> loadString = new ArrayList<>();
@@ -325,11 +334,7 @@ public class IngredientsDatabase {
         loadString.add("MSG");
 
         openDbConnection();
-
-        refreshDb();
-        insertIngredients(addIngredients);
         List<Ingredients> loadIngredients = selectIngredients(loadString);
-
         closeDbConnection();
     }
 }

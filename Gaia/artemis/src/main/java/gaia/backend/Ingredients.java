@@ -6,12 +6,16 @@ import java.util.*;
  * Created by jf2lin on 2017-02-14.
  */
 
-public class Ingredients {
+public class Ingredients{
+    static String dbEntryDelimiter = "!";
+
     private boolean safeBoolean;
     private List<String> commonNames;
     private List<healthConditionsEnum> safeDetails;
     private String URL;
     private dataSourcesEnum dataSource;
+    private String inputName;
+    private String inputComments;
 
     public enum dataSourcesEnum { // denotes the data sources to poll for health information
         All,
@@ -20,21 +24,26 @@ public class Ingredients {
     }
 
     public enum healthConditionsEnum { // denotes the type of conditions the user are interested in seeing
-        None, Bad,
+        None, EntryNotFound, Bad,
         Allergy_Eggs, Allergy_Milk, Allergy_Mustard, Allergy_Peanuts, Allergy_Seafood, Allergy_Sesame,
         Allergy_Soy, Allergy_Sulphites, Allergy_TreeNuts, Allergy_Wheat
     }
 
     public boolean getSafe() {return safeBoolean;}
     public int getSafeInt() {if (safeBoolean == true) return 1; else return 0;}
-    public List<String> getCommonNames() {return commonNames;};
-    public List<healthConditionsEnum> getDetails() {return safeDetails;};
-    public String getURL() {return URL;};
+    public String getSafeStr() {if (safeBoolean == true) return "SAFE"; else return "NOT SAFE";}
+    public List<String> getCommonNames() {return commonNames;}
+    public List<healthConditionsEnum> getDetails() {return safeDetails;}
+    public String getURL() {return URL;}
+    public String getInputName() {return inputName;}
+    public String getInputComments() {return inputComments;}
 
     public void setSafe(boolean pSafe) {safeBoolean = pSafe;}
     public void setCommonNames(List<String> pCommonName) {commonNames = pCommonName;};
     public void setDetails(List<healthConditionsEnum> pDetails) {safeDetails = pDetails;};
     public void setURL(String pURL) {URL = pURL;};
+    public void setInputName(String pInputName) {inputName = pInputName;}
+    public void setInputComments(String pInputComments) {inputComments = pInputComments;}
 
     public static void main(String[] args) {
         // generate a list of ingredients
@@ -110,5 +119,30 @@ public class Ingredients {
 
         // parse into the member variables of this class
         return false;
+    }
+
+    public static String convertSafeDetailListEnumToString(List<Ingredients.healthConditionsEnum> safeDetailsList) {
+        String safeDetailsString = safeDetailsList.get(0).name();
+
+        for (int i = 1; i < safeDetailsList.size(); i++) {
+            safeDetailsString = safeDetailsString + dbEntryDelimiter + safeDetailsList.get(i).name();
+        }
+
+        return safeDetailsString;
+    }
+
+    public static List<Ingredients.healthConditionsEnum> convertStringToSafeDetailList(String safeDetailsString) {
+        List<Ingredients.healthConditionsEnum> safeDetailsList = new ArrayList<>();
+        List<String> stringList = Arrays.asList(safeDetailsString.split(dbEntryDelimiter));
+
+        for (int i = 0; i < stringList.size(); i++) {
+            safeDetailsList.add(Ingredients.healthConditionsEnum.valueOf(stringList.get(i)));
+        }
+
+        return safeDetailsList;
+    }
+
+    public String getSafeDetailsString() {
+        return convertSafeDetailListEnumToString(safeDetails);
     }
 }

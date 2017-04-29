@@ -10,7 +10,7 @@ import java.lang.*;
 
 public class IngredientsDatabase {
     static String dbProtocol = "org.sqlite.JDBC";
-    static String dbName = "jdbc:sqlite:test.db";
+    static String dbName = "jdbc:sqlite:gaia_foodsafety.db";
     static String tableNameIngredientSafety = "INGREDIENTSAFETY";
     static String tableNameNameMap = "NAMEMAP";
     Connection c = null;
@@ -120,24 +120,33 @@ public class IngredientsDatabase {
     public void insertIngredients(List<Ingredients> pIngredients)
     {
         Statement stmt = null;
-
         String nowTime = "1970/01/01";
 
         for (int i = 0; i < pIngredients.size(); i++)
         {
             int newPkid = findLargestPkid() + 1;
+            List<String> commonNames = pIngredients.get(i).getCommonNames();
+
+            System.out.println("Adding " + commonNames.get(0) + " into " + tableNameIngredientSafety + "...");
 
             String sqlStr = "INSERT INTO " + tableNameIngredientSafety + " (INGREDIENTSAFETY_PK,URL,SAFE,DETAILS,LASTUPDATE) " +
                     "VALUES (" + newPkid + ", '" + pIngredients.get(i).getURL() + "', " +
-                    pIngredients.get(i).getSafeInt() + ", '" + convertSafeDetailListEnumToString(pIngredients.get(i).getDetails()) + "', '" + nowTime + "');";
+                    pIngredients.get(i).getSafeInt() + ", '" + Ingredients.convertSafeDetailListEnumToString(pIngredients.get(i).getDetails()) + "', '" + nowTime + "');";
             sqlExecuteUpdate(sqlStr);
 
-            List<String> commonNames = pIngredients.get(i).getCommonNames();
             for (int j = 0; j < commonNames.size(); j++)
             {
+                System.out.println("  Adding " + commonNames.get(j) + " into " + tableNameNameMap + ".");
+
                 sqlStr = "INSERT INTO " + tableNameNameMap + " (NAMEMAP_PK,INGREDIENTSAFETY_PK) " +
                         "VALUES ('" + commonNames.get(j) + "', " + newPkid + ");";
-                sqlExecuteUpdate(sqlStr);
+
+                try {
+                    sqlExecuteUpdate(sqlStr);
+                }
+                catch ( Exception e ) {
+                    System.out.println("  Error adding " + commonNames.get(j) + " into " + tableNameNameMap + ": " + e.toString());
+                }
             }
         }
 
@@ -173,11 +182,20 @@ public class IngredientsDatabase {
             retrievedIngredients = new Ingredients();
             List<String> retrievedString = new ArrayList<>();
 
+            retrievedIngredients.setInputName(pIngredientName);
+
             if (!rs.isBeforeFirst() ) {
-                retrievedString.add(pIngredientName);
-//                retrievedIngredients.setDetails("No entry found in db");
+//                retrievedIngredients.setInputComments("No entry found.");
+                retrievedIngredients.setSafe(false); // default set the unfound entries to unsafe
+
+                List<Ingredients.healthConditionsEnum> tempArray = new ArrayList<>();
+                tempArray.add(Ingredients.healthConditionsEnum.EntryNotFound);
+                retrievedIngredients.setDetails(tempArray);
+
+                retrievedIngredients.setURL("");
             }
             else {
+//                retrievedIngredients.setInputComments("Entry found.");
                 rs.next();
                 int pkId = rs.getInt("INGREDIENTSAFETY_PK");
 
@@ -198,7 +216,7 @@ public class IngredientsDatabase {
                 else
                     retrievedIngredients.setSafe(true);
 
-                List<Ingredients.healthConditionsEnum> tempArray = convertStringToSafeDetailList(rs3.getString("DETAILS"));
+                List<Ingredients.healthConditionsEnum> tempArray = Ingredients.convertStringToSafeDetailList(rs3.getString("DETAILS"));
                 retrievedIngredients.setDetails(tempArray);
 
 //                retrievedIngredients.setDetails(rs3.getString("DETAILS"));
@@ -211,7 +229,6 @@ public class IngredientsDatabase {
 
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
         }
 
         return retrievedIngredients;
@@ -255,7 +272,6 @@ public class IngredientsDatabase {
             stmt.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
         }
     }
     
@@ -287,27 +303,6 @@ public class IngredientsDatabase {
         return rs;
     }
 
-    public String convertSafeDetailListEnumToString(List<Ingredients.healthConditionsEnum> safeDetailsList) {
-        String safeDetailsString = safeDetailsList.get(0).name();
-
-        for (int i = 1; i < safeDetailsList.size(); i++) {
-            safeDetailsString = safeDetailsString + "-" + safeDetailsList.get(i).name();
-        }
-
-        return safeDetailsString;
-    }
-
-    public List<Ingredients.healthConditionsEnum> convertStringToSafeDetailList(String safeDetailsString) {
-        List<Ingredients.healthConditionsEnum> safeDetailsList = new ArrayList<>();
-        List<String> stringList = Arrays.asList(safeDetailsString.split("-"));
-
-        for (int i = 0; i < stringList.size(); i++) {
-            safeDetailsList.add(Ingredients.healthConditionsEnum.valueOf(stringList.get(i)));
-        }
-
-        return safeDetailsList;
-    }
-
     public void resetDatabaseAndUpdate()
     {
         // initalize the db
@@ -316,11 +311,18 @@ public class IngredientsDatabase {
         closeDbConnection();
 
         // loading data from websites
+        System.out.println("Populating database...");
         List<Ingredients> addIngredients = new ArrayList<>();
-        Ingredients eggIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("egg", Ingredients.healthConditionsEnum.Allergy_Eggs);
-        Ingredients milkIngredientObj = HTTPGetter.pollFromFoodAllergiesCanada("milk", Ingredients.healthConditionsEnum.Allergy_Milk);
-        addIngredients.add(eggIngredientObj);
-        addIngredients.add(milkIngredientObj);
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Egg", Ingredients.healthConditionsEnum.Allergy_Eggs));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Milk", Ingredients.healthConditionsEnum.Allergy_Milk));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Mustard", Ingredients.healthConditionsEnum.Allergy_Mustard));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Peanuts", Ingredients.healthConditionsEnum.Allergy_Peanuts));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Seafood", Ingredients.healthConditionsEnum.Allergy_Seafood));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Sesame", Ingredients.healthConditionsEnum.Allergy_Sesame));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Soy", Ingredients.healthConditionsEnum.Allergy_Soy));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Sulphites", Ingredients.healthConditionsEnum.Allergy_Sulphites));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Tree-nuts", Ingredients.healthConditionsEnum.Allergy_TreeNuts));
+        addIngredients.add(HTTPGetter.pollFromFoodAllergiesCanada("Wheat", Ingredients.healthConditionsEnum.Allergy_Wheat));
 
         // insert into the db
         openDbConnection();
@@ -328,13 +330,19 @@ public class IngredientsDatabase {
         closeDbConnection();
 
         // poll database for data
+        System.out.println("Polling database...");
         List<String> loadString = new ArrayList<>();
-        loadString.add("egg");
-        loadString.add("milk");
+        loadString.add("Egg");
+        loadString.add("Milk");
         loadString.add("MSG");
 
         openDbConnection();
         List<Ingredients> loadIngredients = selectIngredients(loadString);
         closeDbConnection();
+
+        for (int i = 0; i < loadIngredients.size(); i++) {
+            System.out.println("" + loadIngredients.get(i).getInputName() + " is " +
+                    loadIngredients.get(i).getSafeStr() + " (" + loadIngredients.get(i).getSafeDetailsString() + ")");
+        }
     }
 }

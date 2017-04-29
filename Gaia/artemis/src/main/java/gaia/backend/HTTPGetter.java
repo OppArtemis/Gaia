@@ -1,5 +1,7 @@
 package gaia.backend;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -50,13 +52,18 @@ public class HTTPGetter {
         // Since HTML has a tree structure, then we wish to get the lowest node
         // hence getting the last node. And the children nodes will contain the
         // list of names.
-        Elements childNodes = htmlBody.select("*:contains(Other names for) + ul").last().children();
-
-        // Store information in list
         List<String> otherNames = new ArrayList<>();
 
-        for (int i = 0; i < childNodes.size(); i++) {
-            otherNames.add(childNodes.get(i).text());
+        try {
+            // the food item may not have alternative names
+            Elements childNodes = htmlBody.select("*:contains(Other names for) + ul").last().children();
+
+            // Store information in list
+            for (int i = 0; i < childNodes.size(); i++) {
+                otherNames.add(childNodes.get(i).text());
+            }
+        } catch (NullPointerException e) {
+            System.out.println("HTTPGetter: Could not find common names: " + e.toString());
         }
 
         return otherNames;

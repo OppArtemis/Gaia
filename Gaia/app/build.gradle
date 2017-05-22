@@ -20,7 +20,11 @@ android {
 }
 
 dependencies {
+    compile project(':artemis')
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/sqlite-jdbc-3.16.1.jar')
+    compile files('libs/jsoup-1.10.2.jar')
 	compile 'com.android.support:support-v4:24.2.0'
     compile 'com.google.android.gms:play-services-vision:9.4.0+'
     compile 'com.android.support:design:24.2.0'

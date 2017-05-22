@@ -72,28 +72,28 @@
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\layout\\abc_search_view.xml"
     },
     {
-        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_media.xml",
-        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\layout\\notification_template_media.xml"
-    },
-    {
         "merged": "D:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_dialog_title_material.xml",
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\layout\\abc_dialog_title_material.xml"
+    },
+    {
+        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\layout\\notification_template_media.xml",
+        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\layout\\notification_template_media.xml"
     },
     {
         "merged": "D:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_layout_tab_text.xml",
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\893a7df3b94af9de7cba6193969988701229d00b\\output\\res\\layout\\design_layout_tab_text.xml"
     },
     {
-        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_layout_tab_icon.xml",
-        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\893a7df3b94af9de7cba6193969988701229d00b\\output\\res\\layout\\design_layout_tab_icon.xml"
+        "merged": "D:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_material.xml",
+        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\layout\\abc_alert_dialog_material.xml"
     },
     {
         "merged": "D:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_layout_tab_icon.xml",
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\893a7df3b94af9de7cba6193969988701229d00b\\output\\res\\layout\\design_layout_tab_icon.xml"
     },
     {
-        "merged": "D:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_material.xml",
-        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\layout\\abc_alert_dialog_material.xml"
+        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_layout_tab_icon.xml",
+        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\893a7df3b94af9de7cba6193969988701229d00b\\output\\res\\layout\\design_layout_tab_icon.xml"
     },
     {
         "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\layout\\select_dialog_multichoice_material.xml",

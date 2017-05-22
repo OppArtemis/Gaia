@@ -16,20 +16,20 @@
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\3396f46ebb31d7857c2b1e1e5d945e2807fa8da8\\output\\res\\drawable-xxhdpi-v4\\abc_list_longpressed_holo.9.png"
     },
     {
-        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_google_signin_btn_icon_light_disabled.9.png",
-        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\b8129593e411b8a440717e7d380aa47812f03719\\output\\res\\drawable-xxhdpi-v4\\common_google_signin_btn_icon_light_disabled.9.png"
-    },
-    {
         "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_google_signin_btn_icon_dark_focused.9.png",
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\b8129593e411b8a440717e7d380aa47812f03719\\output\\res\\drawable-xxhdpi-v4\\common_google_signin_btn_icon_dark_focused.9.png"
     },
     {
-        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_google_signin_btn_text_light_normal.9.png",
-        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\b8129593e411b8a440717e7d380aa47812f03719\\output\\res\\drawable-xxhdpi-v4\\common_google_signin_btn_text_light_normal.9.png"
+        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_google_signin_btn_icon_light_disabled.9.png",
+        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\b8129593e411b8a440717e7d380aa47812f03719\\output\\res\\drawable-xxhdpi-v4\\common_google_signin_btn_icon_light_disabled.9.png"
     },
     {
         "merged": "D:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_google_signin_btn_text_dark_normal.9.png",
         "source": "C:\\Users\\jf2lin\\.android\\build-cache\\b8129593e411b8a440717e7d380aa47812f03719\\output\\res\\drawable-xxhdpi-v4\\common_google_signin_btn_text_dark_normal.9.png"
+    },
+    {
+        "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_google_signin_btn_text_light_normal.9.png",
+        "source": "C:\\Users\\jf2lin\\.android\\build-cache\\b8129593e411b8a440717e7d380aa47812f03719\\output\\res\\drawable-xxhdpi-v4\\common_google_signin_btn_text_light_normal.9.png"
     },
     {
         "merged": "D:\\artemis\\android-vision-master\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi-v4\\common_plus_signin_btn_text_dark_focused.9.png",

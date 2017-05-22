@@ -26,8 +26,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -42,7 +42,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSource;
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSourcePreview;
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.GraphicOverlay;
@@ -50,7 +49,11 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.File;
+
+import gaia.backend.*;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -109,24 +112,22 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+        Snackbar.make(mGraphicOverlay, "Tap to Capture. Pinch/Stretch to zoom",
                 Snackbar.LENGTH_LONG)
                 .show();
 
-        // Set up the Text To Speech engine.
-        TextToSpeech.OnInitListener listener =
-                new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(final int status) {
-                        if (status == TextToSpeech.SUCCESS) {
-                            Log.d("OnInitListener", "Text to speech engine started successfully.");
-                            tts.setLanguage(Locale.US);
-                        } else {
-                            Log.d("OnInitListener", "Error starting the text to speech engine.");
-                        }
-                    }
-                };
-        tts = new TextToSpeech(this.getApplicationContext(), listener);
+        initDb();
+    }
+
+    private void initDb(){
+        IngredientsDatabaseAndroid testDb = new IngredientsDatabaseAndroid();
+
+       // String filePath = Context.getFilesDir().getPath().toString() + "/fileName.txt";
+        File filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File f = new File(filePath, "/" + "gaia_foodsafety.db");
+
+        testDb.updateDbName(f.toString());
+        testDb.resetDatabaseAndUpdate();
     }
 
     /**
@@ -347,8 +348,30 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             text = graphic.getTextBlock();
             if (text != null && text.getValue() != null) {
                 Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Speak the string.
-                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+//                // Speak the string.
+//                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+
+                // Poll DB for searched item
+                System.out.println("Polling database...");
+                List<String> loadString = new ArrayList<>();
+                loadString.add(text.getValue());
+
+                IngredientsDatabaseJava testDb = new IngredientsDatabaseJava();
+                testDb.openDbConnection();
+                List<Ingredients> loadIngredients = testDb.selectIngredients(loadString);
+                testDb.closeDbConnection();
+
+                String outputString = "";
+                for (int i = 0; i < loadIngredients.size(); i++) {
+                    outputString = outputString + ", " + loadIngredients.get(i).getInputName() + " is " +
+                            loadIngredients.get(i).getSafeStr() + " (" + loadIngredients.get(i).getSafeDetailsString() + ")";
+                }
+
+                System.out.println(outputString);
+
+                Snackbar.make(mGraphicOverlay, outputString,
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
             else {
                 Log.d(TAG, "text data is null");

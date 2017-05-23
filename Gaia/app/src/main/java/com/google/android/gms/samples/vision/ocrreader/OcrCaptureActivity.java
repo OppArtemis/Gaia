@@ -27,7 +27,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -51,7 +50,6 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 
 import gaia.backend.*;
 
@@ -84,6 +82,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
 
     // A TextToSpeech engine for speaking a String value.
     private TextToSpeech tts;
+
+    IngredientsDatabaseAndroid dbConn;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -120,14 +120,15 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     }
 
     private void initDb(){
-        IngredientsDatabaseAndroid testDb = new IngredientsDatabaseAndroid();
-
-       // String filePath = Context.getFilesDir().getPath().toString() + "/fileName.txt";
-        File filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File f = new File(filePath, "/" + "gaia_foodsafety.db");
-
-        testDb.updateDbName(f.toString());
-        testDb.resetDatabaseAndUpdate();
+        dbConn = new IngredientsDatabaseAndroid(this);
+        dbConn.testLoadEntries();
+int ha = 1;
+//       // String filePath = Context.getFilesDir().getPath().toString() + "/fileName.txt";
+//        File filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//        File f = new File(filePath, "/" + "gaia_foodsafety.db");
+//
+//        testDb.updateDbName(f.toString());
+//        testDb.resetDatabaseAndUpdate();
     }
 
     /**

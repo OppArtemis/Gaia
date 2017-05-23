@@ -15,7 +15,7 @@ public class IngredientsDatabaseJava {
     static String tableNameNameMap = "NAMEMAP";
     Connection c = null;
 
-    public static void main( )
+    public static void main( String[] args )
     {
         System.out.println("IngredientsDatabaseJava main() tester function.");
 

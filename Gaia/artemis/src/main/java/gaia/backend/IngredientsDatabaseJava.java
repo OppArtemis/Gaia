@@ -71,16 +71,16 @@ public class IngredientsDatabaseJava {
         sqlExecuteUpdate(sqlStr);
 
         sqlStr = "CREATE TABLE IF NOT EXISTS " + tableNameIngredientSafety +
-                "(INGREDIENTSAFETY_PK       INT PRIMARY KEY     NOT NULL," +
-                " URL                       TEXT                NOT NULL, " +
-                " SAFE                      INT                 NOT NULL, " +
+                "(_ID                       INT PRIMARY KEY     ," +
+                " URL                       TEXT                , " +
+                " SAFE                      INT                 , " +
                 " DETAILS                   TEXT, " +
                 " LASTUPDATE                TEXT)";
         sqlExecuteUpdate(sqlStr);
 
         sqlStr = "CREATE TABLE IF NOT EXISTS " + tableNameNameMap +
-                "(NAMEMAP_PK                TEXT PRIMARY KEY   NOT NULL," +
-                " INGREDIENTSAFETY_PK       INT                NOT NULL)";
+                "(_ID                       TEXT PRIMARY KEY   ," +
+                " INGREDIENTSAFETY_PK       INT                )";
         sqlExecuteUpdate(sqlStr);
 
         System.out.println("Tables created successfully");
@@ -102,7 +102,7 @@ public class IngredientsDatabaseJava {
             String sqlStr = "SELECT * FROM " + tableNameIngredientSafety + ";";
             ResultSet rs = sqlExecuteQuery(sqlStr);
             while ( rs.next() ) {
-                lastPkId = rs.getInt("INGREDIENTSAFETY_PK");
+                lastPkId = rs.getInt("_ID");
             }
 
 //            String sqlStr = "SELECT * FROM " + tableNameIngredientSafety + ";";
@@ -133,7 +133,7 @@ public class IngredientsDatabaseJava {
 
             System.out.println("Adding " + commonNames.get(0) + " into " + tableNameIngredientSafety + "...");
 
-            String sqlStr = "INSERT INTO " + tableNameIngredientSafety + " (INGREDIENTSAFETY_PK,URL,SAFE,DETAILS,LASTUPDATE) " +
+            String sqlStr = "INSERT INTO " + tableNameIngredientSafety + " (_ID,URL,SAFE,DETAILS,LASTUPDATE) " +
                     "VALUES (" + newPkid + ", '" + pIngredients.get(i).getURL() + "', " +
                     pIngredients.get(i).getSafeInt() + ", '" + Ingredients.convertSafeDetailListEnumToString(pIngredients.get(i).getDetails()) + "', '" + nowTime + "');";
             sqlExecuteUpdate(sqlStr);
@@ -142,7 +142,7 @@ public class IngredientsDatabaseJava {
             {
                 System.out.println("  Adding " + commonNames.get(j) + " into " + tableNameNameMap + ".");
 
-                sqlStr = "INSERT INTO " + tableNameNameMap + " (NAMEMAP_PK,INGREDIENTSAFETY_PK) " +
+                sqlStr = "INSERT INTO " + tableNameNameMap + " (_ID,INGREDIENTSAFETY_PK) " +
                         "VALUES ('" + commonNames.get(j) + "', " + newPkid + ");";
 
                 try {
@@ -178,7 +178,7 @@ public class IngredientsDatabaseJava {
 //            ResultSet rs = sqlExecuteQuery(sqlStr);
 
             // sanitized form
-            String sqlStr = "SELECT * FROM " + tableNameNameMap + " WHERE NAMEMAP_PK=?;";
+            String sqlStr = "SELECT * FROM " + tableNameNameMap + " WHERE _ID = ?;";
             PreparedStatement preparedStatement = c.prepareStatement(sqlStr);
             preparedStatement.setString(1, pIngredientName);
             ResultSet rs = preparedStatement.executeQuery();
@@ -204,15 +204,15 @@ public class IngredientsDatabaseJava {
                 int pkId = rs.getInt("INGREDIENTSAFETY_PK");
 
                 // pull out all the common names
-                String sqlStr2 = "SELECT * FROM " + tableNameNameMap + " WHERE INGREDIENTSAFETY_PK='" + pkId + "';";
+                String sqlStr2 = "SELECT * FROM " + tableNameNameMap + " WHERE INGREDIENTSAFETY_PK ='" + pkId + "';";
                 ResultSet rs2 = sqlExecuteQuery(sqlStr2);
 
                 while (rs2.next()) {
-                    retrievedString.add(rs2.getString("NAMEMAP_PK"));
+                    retrievedString.add(rs2.getString("_ID"));
                 }
 
                 // pull out the corresponding entry in tableNameIngredientSafety
-                String sqlStr3 = "SELECT * FROM " + tableNameIngredientSafety + " WHERE INGREDIENTSAFETY_PK='" + pkId + "';";
+                String sqlStr3 = "SELECT * FROM " + tableNameIngredientSafety + " WHERE _id ='" + pkId + "';";
                 ResultSet rs3 = sqlExecuteQuery(sqlStr3);
 
                 if (rs3.getInt("SAFE") == 0)
@@ -238,34 +238,6 @@ public class IngredientsDatabaseJava {
         return retrievedIngredients;
     }
 
-    public void insertTesting(int pkId)
-    {
-        String sqlStr = "INSERT INTO " + tableNameIngredientSafety + " (INGREDIENTSAFETY_PK,URL,SAFE,DETAILS,LASTUPDATE) " +
-                "VALUES (" + pkId + ", 'http://fda.ca/eggs/', 0, 'Egg', 'Jan 2, 1970');";
-        sqlExecuteUpdate(sqlStr);
-
-        sqlStr = "INSERT INTO " + tableNameNameMap + " (NAMEMAP_PK,INGREDIENTSAFETY_PK) " +
-                "VALUES ('Egg" + pkId + "', " + pkId + ");";
-        sqlExecuteUpdate(sqlStr);
-
-        sqlStr = "INSERT INTO " + tableNameNameMap + " (NAMEMAP_PK,INGREDIENTSAFETY_PK) " +
-                "VALUES ('Albumin" + pkId + "', " + pkId + ");";
-        sqlExecuteUpdate(sqlStr);
-
-        System.out.println("Records created successfully");
-    }
-
-//    public void sqlExecuteUpdatePrepared(Statement stmt)
-//    {
-//        try {
-//            stmt = c.createStatement();
-//            stmt.executeUpdate(sqlStr);
-//            stmt.close();
-//        } catch ( Exception e ) {
-//            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-//            System.exit(0);
-//        }
-//    }
 
     public void sqlExecuteUpdate(String sqlStr)
     {

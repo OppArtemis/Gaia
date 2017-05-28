@@ -19,7 +19,7 @@ public final class IngredientsNameMapContract {
 
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE IF NOT EXISTS " + NameEntry.TABLE_NAME + " (" +
-                    NameEntry._ID                     + " INTEGER PRIMARY KEY," +
+                    NameEntry._ID                                     + " TEXT PRIMARY KEY," +
                     NameEntry.COLUMN_NAME_INGREDIENTSAFETY_PK         + " TEXT)";
 
     public static final String SQL_DELETE_ENTRIES =

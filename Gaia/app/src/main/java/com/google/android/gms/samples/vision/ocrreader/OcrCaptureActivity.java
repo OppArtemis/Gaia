@@ -48,8 +48,6 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 
 import gaia.backend.*;
@@ -84,6 +82,10 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     // A TextToSpeech engine for speaking a String value.
     private TextToSpeech tts;
 
+    private String dbSourcePath = "https://www.dropbox.com/s/8js3karasyd863g/gaia_foodsafety.db?dl=0#";
+    private String dbTargetFile = "gaia_foodsafety.db";
+    private String dbTargetPath;
+
     IngredientsDatabaseAndroid dbConn;
 
     /**
@@ -117,37 +119,19 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                 Snackbar.LENGTH_LONG)
                 .show();
 
+        File file = new File(getApplicationContext().getFilesDir(), dbTargetFile);
+        dbTargetPath = file.toString();
 
-        initDb();
-    }
-
-    private static void downloadFile(String url, File outputFile) {
-        try {
-            URL u = new URL(url);
-            URLConnection conn = u.openConnection();
-            int contentLength = conn.getContentLength();
-
-            DataInputStream stream = new DataInputStream(u.openStream());
-
-            byte[] buffer = new byte[contentLength];
-            stream.readFully(buffer);
-            stream.close();
-
-            DataOutputStream fos = new DataOutputStream(new FileOutputStream(outputFile));
-            fos.write(buffer);
-            fos.flush();
-            fos.close();
-        } catch(FileNotFoundException e) {
-            return; // swallow a 404
-        } catch (IOException e) {
-            return; // swallow a 404
-        }
+     //   new GetFileFromURL().execute(dbSourcePath, dbTargetPath);
+        new GetDataFromSQL(this).execute();
+//        initDb();
     }
 
     private void initDb(){
         dbConn = new IngredientsDatabaseAndroid(this);
         dbConn.testLoadEntries();
-int ha = 1;
+        int ha = 1;
+
 //       // String filePath = Context.getFilesDir().getPath().toString() + "/fileName.txt";
 //        File filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 //        File f = new File(filePath, "/" + "gaia_foodsafety.db");

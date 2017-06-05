@@ -26,6 +26,8 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.images.Size;
+import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSource;
+import com.google.android.gms.samples.vision.ocrreader.ui.camera.GraphicOverlay;
 
 import java.io.IOException;
 

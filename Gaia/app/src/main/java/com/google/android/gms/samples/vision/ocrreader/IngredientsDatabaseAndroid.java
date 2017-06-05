@@ -25,20 +25,20 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(IngredientSafetyContract.SQL_CREATE_ENTRIES);
-        db.execSQL(IngredientsNameMapContract.SQL_CREATE_ENTRIES);
-        System.out.println("Tables created successfully");
-
-        populateTables();
+//        db.execSQL(IngredientSafetyContract.SQL_CREATE_ENTRIES);
+//        db.execSQL(IngredientsNameMapContract.SQL_CREATE_ENTRIES);
+//        System.out.println("Tables created successfully");
+//
+//        populateTables();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(IngredientSafetyContract.SQL_DELETE_ENTRIES);
-        db.execSQL(IngredientsNameMapContract.SQL_DELETE_ENTRIES);
-        System.out.println("Tables dropped successfully");
-
-        onCreate(db);
+//        db.execSQL(IngredientSafetyContract.SQL_DELETE_ENTRIES);
+//        db.execSQL(IngredientsNameMapContract.SQL_DELETE_ENTRIES);
+//        System.out.println("Tables dropped successfully");
+//
+//        onCreate(db);
     }
 
     @Override
@@ -260,7 +260,8 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
         }
 
         retrievedIngredients.setCommonNames(retrievedString);
-
+        retrievedIngredients.setInputName(pIngredientName);
+        
         return retrievedIngredients;
     }
 
@@ -302,11 +303,16 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
         loadString.add("Milk");
         loadString.add("MSG");
 
-        List<Ingredients> loadIngredients = selectIngredients(loadString);
+        try {
+            List<Ingredients> loadIngredients = selectIngredients(loadString);
 
-        for (int i = 0; i < loadIngredients.size(); i++) {
-            System.out.println("" + loadIngredients.get(i).getInputName() + " is " +
-                    loadIngredients.get(i).getSafeStr() + " (" + loadIngredients.get(i).getSafeDetailsString() + ")");
+            for (int i = 0; i < loadIngredients.size(); i++) {
+                System.out.println("" + loadIngredients.get(i).getInputName() + " is " +
+                        loadIngredients.get(i).getSafeStr() + " (" + loadIngredients.get(i).getSafeDetailsString() + ")");
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
 }

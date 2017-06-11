@@ -71,7 +71,7 @@ public class IngredientsDatabaseJava {
         sqlExecuteUpdate(sqlStr);
 
         sqlStr = "CREATE TABLE IF NOT EXISTS " + tableNameIngredientSafety +
-                "(_id                       INT PRIMARY KEY     ," +
+                "(_ID                       INT PRIMARY KEY     ," +
                 " URL                       TEXT                , " +
                 " SAFE                      INT                 , " +
                 " DETAILS                   TEXT, " +
@@ -79,7 +79,7 @@ public class IngredientsDatabaseJava {
         sqlExecuteUpdate(sqlStr);
 
         sqlStr = "CREATE TABLE IF NOT EXISTS " + tableNameNameMap +
-                "(_id                       TEXT PRIMARY KEY   ," +
+                "(_ID                       TEXT PRIMARY KEY   ," +
                 " INGREDIENTSAFETY_PK       INT                )";
         sqlExecuteUpdate(sqlStr);
 

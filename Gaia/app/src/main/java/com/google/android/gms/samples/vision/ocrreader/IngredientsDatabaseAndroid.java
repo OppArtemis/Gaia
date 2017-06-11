@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.*;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,10 +163,6 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
         String selection = IngredientsNameMapContract.NameEntry.COLUMN_NAME_INGREDIENTSAFETY_PK + " = ?";
         String[] selectionArgs = { Integer.toString(pkId) };
 
-        // How you want the results sorted in the resulting Cursor
-        String sortOrder =
-                IngredientsNameMapContract.NameEntry._ID + " DESC";
-
         Cursor cursor = db.query(
                 IngredientsNameMapContract.NameEntry.TABLE_NAME,                     // The table to query
                 projection,                               // The columns to return
@@ -173,7 +170,7 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
                 selectionArgs,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+                null                                      // The sort order
         );
 
         List<String> itemIds = new ArrayList<>();
@@ -266,13 +263,14 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
     }
 
 
-    public List<Ingredients> selectIngredients(List<String> pIngredientNames)
+    public ArrayList<Ingredients> selectIngredients(List<String> pIngredientNames)
     {
-        List<Ingredients> retrievedIngredients = new ArrayList<>(pIngredientNames.size());
+        ArrayList<Ingredients> retrievedIngredients = new ArrayList<>(pIngredientNames.size());
 
         for (int i = 0; i < pIngredientNames.size(); i++)
         {
-            retrievedIngredients.add(selectIngredients(pIngredientNames.get(i)));
+            Ingredients newIng = selectIngredients(pIngredientNames.get(i));
+            retrievedIngredients.add(newIng);
         }
 
         return retrievedIngredients;
@@ -296,23 +294,25 @@ public class IngredientsDatabaseAndroid extends SQLiteOpenHelper {
         insertIngredients(addIngredients);
     }
 
-    public void testLoadEntries() {
+    public String selectAndStringResponse(List<String> loadString) {
         System.out.println("Polling database...");
-        List<String> loadString = new ArrayList<>();
-        loadString.add("Egg");
-        loadString.add("Milk");
-        loadString.add("MSG");
+
+        String respString = "";
 
         try {
-            List<Ingredients> loadIngredients = selectIngredients(loadString);
+            ArrayList<Ingredients> loadIngredients = selectIngredients(loadString);
 
             for (int i = 0; i < loadIngredients.size(); i++) {
-                System.out.println("" + loadIngredients.get(i).getInputName() + " is " +
-                        loadIngredients.get(i).getSafeStr() + " (" + loadIngredients.get(i).getSafeDetailsString() + ")");
+                respString = respString + ("" + loadIngredients.get(i).getInputName() + " is " +
+                        loadIngredients.get(i).getSafeStr() + " (" + loadIngredients.get(i).getSafeDetailsString() + ")" + System.lineSeparator());
             }
+
+            Log.d("Gaia", respString);
         }
         catch (Exception e) {
             System.out.println(e.toString());
         }
+
+        return respString;
     }
 }

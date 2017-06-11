@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
@@ -42,15 +41,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSource;
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSourcePreview;
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
-import java.io.IOException;
-import java.util.Locale;
+import java.io.*;
+import java.util.*;
+
+import gaia.backend.*;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -82,6 +82,12 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     // A TextToSpeech engine for speaking a String value.
     private TextToSpeech tts;
 
+    private String dbSourcePath = "https://dl.dropboxusercontent.com/s/8js3karasyd863g/gaia_foodsafety.db?dl=0#";
+    private String dbTargetFile = "gaia_foodsafety.db";
+    private String dbTargetPath;
+
+    IngredientsDatabaseAndroid dbConn;
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -109,24 +115,36 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+        Snackbar.make(mGraphicOverlay, "Tap to Capture. Pinch/Stretch to zoom",
                 Snackbar.LENGTH_LONG)
                 .show();
 
-        // Set up the Text To Speech engine.
-        TextToSpeech.OnInitListener listener =
-                new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(final int status) {
-                        if (status == TextToSpeech.SUCCESS) {
-                            Log.d("OnInitListener", "Text to speech engine started successfully.");
-                            tts.setLanguage(Locale.US);
-                        } else {
-                            Log.d("OnInitListener", "Error starting the text to speech engine.");
-                        }
-                    }
-                };
-        tts = new TextToSpeech(this.getApplicationContext(), listener);
+//        // Set up the Text To Speech engine.
+//        TextToSpeech.OnInitListener listener =
+//                new TextToSpeech.OnInitListener() {
+//                    @Override
+//                    public void onInit(final int status) {
+//                        if (status == TextToSpeech.SUCCESS) {
+//                            Log.d("OnInitListener", "Text to speech engine started successfully.");
+//                            tts.setLanguage(Locale.US);
+//                        } else {
+//                            Log.d("OnInitListener", "Error starting the text to speech engine.");
+//                        }
+//                    }
+//                };
+//        tts = new TextToSpeech(this.getApplicationContext(), listener);
+
+        String modifiedTargetPath = getApplicationContext().getFilesDir() + "/../databases";
+        File file = new File(modifiedTargetPath);
+        file.mkdirs();
+
+        file = new File(modifiedTargetPath, dbTargetFile);
+        if (file.exists()) file.delete();
+        dbTargetPath = file.toString();
+
+        new DownloadTask(this).execute(dbSourcePath, dbTargetPath);
+        new GetDataFromSQL(this).execute();
+//        initDb();
     }
 
     /**
@@ -347,8 +365,40 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             text = graphic.getTextBlock();
             if (text != null && text.getValue() != null) {
                 Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Speak the string.
-                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+//                // Speak the string.
+//                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+
+                // Poll DB for searched item
+                System.out.println("Polling database...");
+                String[] detectedStr = text.getValue().split(",");
+                List<String> loadString = new ArrayList<>();
+                for (int ind = 0; ind < detectedStr.length; ind++) {
+                    loadString.add(detectedStr[ind].trim());
+                }
+
+                GetDataFromSQL newDbPoll;
+                try {
+                    newDbPoll = new GetDataFromSQL(this, loadString);
+                    newDbPoll.execute();
+
+//                    try {
+//                        wait(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                    int timeOut = 0;
+                    while (newDbPoll.responseString == "noDataYet" || timeOut < 500000) {
+                        timeOut++;
+                    }
+
+                    Snackbar.make(mGraphicOverlay, newDbPoll.responseString,
+                            Snackbar.LENGTH_LONG)
+                            .show();
+
+                }
+                catch (Exception e) {
+                    Log.d("GAIA", e.toString());
+                }
             }
             else {
                 Log.d(TAG, "text data is null");

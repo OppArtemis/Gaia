@@ -1,4 +1,0 @@
-#Sun May 21 16:21:32 EDT 2017
-base.0=D\:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\5\\slice_7
-renamed.0=classes.dex
-file.0=D\:\\artemis\\Gaia\\Gaia\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\5\\slice_7\\classes.dex
